@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# ==========================================
+# Script 3: Disk and Permission Auditor
+# Author: Yadavalli Lokesh
+# Description:
+# Checks important Linux directories
+# Shows permissions and disk usage
+# ==========================================
+
+DIRS=("/etc" "/var/log" "/home" "/usr/bin" "/tmp")
+
+echo "Directory Audit Report"
+echo "-----------------------------------"
+
+for DIR in "${DIRS[@]}"
+do
+
+ if [ -d "$DIR" ]
+ then
+
+ PERMS=$(ls -ld $DIR | awk '{print $1, $3, $4}')
+
+ SIZE=$(du -sh $DIR 2>/dev/null | cut -f1)
+
+ echo "$DIR"
+ echo "Permissions : $PERMS"
+ echo "Size        : $SIZE"
+
+ echo "-----------------------------------"
+
+ else
+
+ echo "$DIR not found"
+
+ fi
+
+done

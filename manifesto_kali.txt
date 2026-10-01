@@ -1,0 +1,8 @@
+Open Source Manifesto
+Date: Sun Mar 29 10:32:51 AM EDT 2026
+
+I believe open source represents innovation.
+I regularly use nmap in my work.
+In future, I want to build cybersecuritytools and share it with the community.
+
+Knowledge grows when shared openly.
