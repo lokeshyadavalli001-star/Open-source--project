@@ -1,8 +1,9 @@
 Open Source Manifesto
-Date: Sun Mar 29 10:32:51 AM EDT 2026
+Author: Yadavalli Lokesh
+Date: Thu, 01 Oct 2026 10:02:36 GMT
 
-I believe open source represents innovation.
-I regularly use nmap in my work.
-In future, I want to build cybersecuritytools and share it with the community.
+I believe open source represents collaboration, security transparency, and open innovation.
+I regularly use Nmap, Wireshark, and Metasploit Framework in my work.
+In future, I want to develop ethical hacking security tools and contribute to the community.
 
 Knowledge grows when shared openly.

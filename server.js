@@ -83,18 +83,35 @@ function parseJsonBody(req) {
 }
 
 // Script runner simulator / real runner
-function executeScript(scriptId, params = {}) {
+function executeScript(scriptId, params = {}, customCode = null) {
   const timestamp = new Date().toUTCString();
+  const scriptItem = PROJECT_INFO.scripts.find(s => s.id === scriptId);
+  let scriptContent = customCode;
+  if (!scriptContent && scriptItem) {
+    try {
+      scriptContent = fs.readFileSync(path.join(__dirname, scriptItem.file), 'utf8');
+    } catch (e) {}
+  }
+
+  let authorName = 'Yadavalli Lokesh';
+  if (scriptContent) {
+    const authorMatch = scriptContent.match(/#\s*Author:\s*(.+)/i);
+    if (authorMatch && authorMatch[1]) {
+      authorName = authorMatch[1].trim();
+    }
+  }
 
   switch (scriptId) {
     case 'script1': {
+      const loggedUser = authorName.toLowerCase().replace(/\s+/g, '_');
       return `================================
    Open Source Audit - Kali Linux
+   Author: ${authorName}
 ================================
 Distribution   : Kali GNU/Linux Rolling 2026.1
 Kernel Version : 6.8.11-kali-amd64
-Logged User    : yadavalli_lokesh
-System Uptime  : up 4 hours, 28 minutes
+Logged User    : ${loggedUser}
+System Uptime  : up 4 hours, 32 minutes
 Current Date   : ${timestamp}
 License        : GNU General Public License (GPL)
 ================================
@@ -165,7 +182,7 @@ Open-source software promotes transparency and innovation.`;
     case 'script3': {
       return `=============================================
    Linux Directory and Permission Auditor
-   Author: Yadavalli Lokesh
+   Author: ${authorName}
 =============================================
 
 Directory: /etc
@@ -216,8 +233,8 @@ Audit completed successfully. All 5 directories comply with FOSS Linux security 
       const count = keyword === 'error' ? 3 : (keyword === 'failed' ? 1 : 14);
 
       return `==========================================
-   Log File Analyzer – Kali Linux
-   Author: Yadavalli Lokesh
+   Log File Analyzer - Kali Linux
+   Author: ${authorName}
 ==========================================
 Target Log File : ${logFile}
 Search Keyword  : ${keyword}
@@ -238,7 +255,7 @@ Log file audit completed with zero fatal anomalies detected.`;
       const q3 = params.q3 || 'develop ethical hacking security tools and contribute to the community';
 
       const content = `Open Source Manifesto
-Author: Yadavalli Lokesh
+Author: ${authorName}
 Date: ${timestamp}
 
 I believe open source represents ${q1}.
@@ -327,14 +344,32 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (pathname === '/api/save-script' && req.method === 'POST') {
+    try {
+      const data = await parseJsonBody(req);
+      const script = PROJECT_INFO.scripts.find(s => s.id === data.scriptId);
+      if (!script) {
+        throw new Error('Script not found: ' + data.scriptId);
+      }
+      const filePath = path.join(__dirname, script.file);
+      fs.writeFileSync(filePath, data.code, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ success: true, message: `Successfully saved ${script.file}` }));
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ success: false, error: err.message }));
+    }
+    return;
+  }
+
   if (pathname === '/api/run-script' && req.method === 'POST') {
     try {
       const data = await parseJsonBody(req);
-      const output = executeScript(data.scriptId, data.params || {});
-      res.writeHead(200, { 'Content-Type': 'application/json' });
+      const output = executeScript(data.scriptId, data.params || {}, data.code);
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify({ success: true, scriptId: data.scriptId, output }));
     } catch (err) {
-      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify({ success: false, error: err.message }));
     }
     return;
