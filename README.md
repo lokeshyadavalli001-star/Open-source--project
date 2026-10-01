@@ -95,9 +95,38 @@ Open source tools play an important role in modern cybersecurity and software de
 
 ---
 
+---
+
+## How to Run on Localhost (Interactive Web Dashboard)
+
+You can launch and view the interactive web dashboard on your local machine:
+
+1. Open a terminal in the project directory.
+2. Run the server using Node.js:
+   ```bash
+   node server.js
+   ```
+   *(or `npm start`)*
+3. Open your browser and navigate to:
+   ```
+   http://localhost:3000
+   ```
+
+The dashboard includes:
+- Live terminal execution simulator for Scripts 1–5
+- Source code inspector with copy-to-clipboard functionality
+- Interactive Open Source Manifesto generator and downloader
+- Comprehensive theoretical audit of Kali Linux & GPL v3
+
+---
+
 ## Repository Structure
 
 ```text
+package.json
+server.js
+public/
+  └── index.html
 README.md
 manifesto_kali.txt
 script1_system_info.sh
